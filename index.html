@@ -37,7 +37,7 @@
     position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(18,35,89,.28);
     transition:background .3s,color .3s}
   @media(min-width:440px){ .phone{border-radius:34px;height:860px} }
-  .app-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 18px 130px}
+  .app-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:74px 18px 130px}
   .app-scroll::-webkit-scrollbar{width:0}
   h1,h2,h3,.display{font-family:var(--display);letter-spacing:-.02em;margin:0}
 
@@ -49,10 +49,18 @@
   .mark i:nth-child(3){width:85%}
   .phone.dark .mark i:nth-child(1){background:#9fb0e8}
 
-  /* topbar */
-  .topbar{display:flex;align-items:center;gap:10px;padding:18px 18px 6px}
-  .topbar .title{font-family:var(--display);font-weight:800;font-size:25px;flex:1}
-  .brandmark{width:30px;height:34px;flex:none}
+  /* topbar — sticky, translucent, compresses on scroll */
+  .topbar{position:absolute;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:9px;padding:18px 18px 12px;
+    transition:padding .22s ease, background .22s ease, box-shadow .22s ease, border-color .22s ease}
+  .topbar.scrolled{padding:9px 16px;background:color-mix(in srgb,var(--bg) 72%, transparent);
+    -webkit-backdrop-filter:saturate(180%) blur(16px);backdrop-filter:saturate(180%) blur(16px);
+    box-shadow:0 6px 20px rgba(18,35,89,.08);border-bottom:1px solid var(--line)}
+  .topbar .title{font-family:var(--display);font-weight:800;font-size:24px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:font-size .22s}
+  .topbar.scrolled .title{font-size:19px}
+  .brandmark{width:30px;height:34px;flex:none;transition:.22s}
+  .topbar.scrolled .brandmark{width:25px;height:29px}
+  .topbar.scrolled .rolechip{padding:7px 11px}
+  .topbar.scrolled .tbtn{width:34px;height:34px}
   .tbtn{width:38px;height:38px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);
     display:grid;place-items:center;cursor:pointer}
   .tbtn svg{width:19px;height:19px}
@@ -196,9 +204,17 @@
   .hist .hr{margin-left:auto;text-align:right}.hist .hr .amt{font-family:var(--display);font-weight:800}
   .badge{font-size:11px;font-weight:700;color:var(--green);background:color-mix(in srgb,var(--green) 16%,transparent);padding:2px 8px;border-radius:20px}
 
-  .avatar{width:92px;height:92px;border-radius:50%;margin:6px auto 10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--hero1),var(--hero2));color:#fff;font-family:var(--display);font-weight:800;font-size:32px;box-shadow:var(--shadow)}
-  .pname{text-align:center;font-family:var(--display);font-weight:800;font-size:22px}
-  .prole{text-align:center;color:var(--acc);font-weight:700;font-size:13px;margin-bottom:18px}
+  /* profile header card */
+  .pcard{border-radius:24px;padding:24px 22px;color:#fff;text-align:center;position:relative;overflow:hidden;margin-top:6px;background:linear-gradient(135deg,var(--hero1),var(--hero2));box-shadow:0 14px 30px rgba(18,35,89,.28)}
+  .pcard .deco{position:absolute;right:16px;top:16px;display:flex;flex-direction:column;gap:5px;width:44px;opacity:.45}
+  .pcard .deco i{height:6px;border-radius:3px;background:#fff}
+  .pcard .deco i:nth-child(1){width:100%;background:#0c1737}.pcard .deco i:nth-child(2){width:64%}.pcard .deco i:nth-child(3){width:80%}.pcard .deco i:nth-child(4){width:40%;background:var(--cyan)}
+  .pcard .pav{width:78px;height:78px;border-radius:24px;background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.32);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:30px;margin:0 auto 12px}
+  .pcard .phn{font-family:var(--display);font-weight:800;font-size:22px}
+  .pcard .rolepill{display:inline-block;background:rgba(255,255,255,.18);padding:4px 13px;border-radius:20px;font-size:12px;font-weight:700;margin-top:8px}
+  .pcard .meta{display:flex;justify-content:center;gap:30px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18)}
+  .pcard .meta .m b{display:block;font-family:var(--display);font-weight:800;font-size:17px}
+  .pcard .meta .m span{font-size:11px;color:#c3cdf1}
   .info .r{display:flex;align-items:center;gap:12px;padding:14px 0;border-top:1px solid var(--line)}.info .r:first-child{border-top:none}
   .info .r .ri{width:36px;height:36px;border-radius:10px;background:var(--chip);display:grid;place-items:center;color:var(--acc);flex:none}
   .info .r .rl{color:var(--muted);font-size:12px;font-weight:600}.info .r .rv{font-weight:700}
@@ -374,10 +390,10 @@
 
     <!-- PROFILE -->
     <section class="screen" data-screen="profile">
-      <div class="avatar" id="pAvatar">V</div>
-      <div class="pname" id="pName">Van Salesman</div>
-      <div class="prole" id="pRole">Van Salesman</div>
+      <div class="pcard" id="pHead"></div>
+      <div class="section-title"><span class="mark"><i></i><i></i><i></i></span>Personal Info</div>
       <div class="card info" id="pInfo"></div>
+      <button class="btn-ghost"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> Change Password</button>
       <button class="btn-ghost"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v6M5.6 5.6a9 9 0 1 0 12.8 0"/></svg> Resync My Data</button>
       <button class="btn-ghost btn-logout" onclick="logout()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg> Log out</button>
     </section>
@@ -458,7 +474,6 @@ function buildNav(){
        ['profile','Profile','P']]
     : [['mhome','Dashboard','M3 13h4v8H3zM10 3h4v18h-4zM17 9h4v12h-4z'],
        ['team','Team','TEAM'],
-       ['history','History','C'],
        ['profile','Profile','P']];
   const ICON={
     R:'<rect x="1" y="6" width="13" height="10" rx="1"/><path d="M14 9h4l3 3v4h-7z"/><circle cx="6" cy="18" r="1.4"/><circle cx="17.5" cy="18" r="1.4"/>',
@@ -486,17 +501,31 @@ function go(name){
   document.getElementById('scroll').scrollTop=0;
 }
 
-/* profile render (per role) */
+/* profile render (per role) — distinct icons, gradient header card */
+const PIC={
+  person:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  badge:'<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="12" cy="10" r="2.4"/><path d="M8 16.5a4 4 0 0 1 8 0"/>',
+  car:'<path d="M5 17H3v-6l2-5h11l3 5h1v6h-2"/><circle cx="7.5" cy="17" r="1.8"/><circle cx="16.5" cy="17" r="1.8"/>',
+  team:'<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14a5 5 0 0 1 5 6"/>',
+  pin:'<path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>'
+};
+function psvg(k){return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${PIC[k]}</svg>`;}
 function renderProfile(){
   const van = ROLE==='van';
-  document.getElementById('pAvatar').textContent = van?'V':'M';
-  document.getElementById('pName').textContent = van?'Van Salesman':'Manager';
-  document.getElementById('pRole').textContent = van?'Van Salesman':'Regional Manager';
-  const rowsVan=[['Name','Van Salesman'],['Email','van.salesman@southmin'],['Salesman Type','Van Salesman'],['Van Number','Van 12'],['Vehicle Model','Isuzu NHR 55 Van'],['Plate Number','NDY 5521']];
-  const rowsMgr=[['Name','Manager'],['Email','manager@southmin'],['Role','Regional Manager'],['Team','Davao Fleet · 3 reps'],['Region','Southern Mindanao']];
-  const rows = van?rowsVan:rowsMgr;
-  document.getElementById('pInfo').innerHTML = rows.map(([l,v])=>`
-    <div class="r"><div class="ri"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></div><div><div class="rl">${l}</div><div class="rv">${v}</div></div></div>`).join('');
+  const meta = van ? [['Van 12','Assigned van'],['NDY 5521','Plate no.']]
+                   : [['3','Team reps'],['Southmin','Region']];
+  document.getElementById('pHead').innerHTML = `
+    <div class="deco"><i></i><i></i><i></i><i></i></div>
+    <div class="pav">${van?'V':'M'}</div>
+    <div class="phn">${van?'Van Salesman':'Manager'}</div>
+    <span class="rolepill">${van?'Van Salesman':'Regional Manager'}</span>
+    <div class="meta">${meta.map(m=>`<div class="m"><b>${m[0]}</b><span>${m[1]}</span></div>`).join('')}</div>`;
+  const rows = van
+    ? [['person','Full Name','Van Salesman'],['mail','Email','van.salesman@southmin'],['badge','Salesman Type','Van Salesman'],['car','Vehicle Model','Isuzu NHR 55 Van']]
+    : [['person','Full Name','Manager'],['mail','Email','manager@southmin'],['badge','Role','Regional Manager'],['team','Team','Davao Fleet · 3 reps'],['pin','Region','Southern Mindanao']];
+  document.getElementById('pInfo').innerHTML = rows.map(([ic,l,v])=>`
+    <div class="r"><div class="ri">${psvg(ic)}</div><div><div class="rl">${l}</div><div class="rv">${v}</div></div></div>`).join('');
 }
 
 /* fleet + team (manager) */
@@ -575,6 +604,11 @@ knob.addEventListener('mousedown',slideStart);knob.addEventListener('touchstart'
 window.addEventListener('mousemove',slideMove);window.addEventListener('touchmove',slideMove,{passive:false});
 window.addEventListener('mouseup',slideEnd);window.addEventListener('touchend',slideEnd);
 function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600);}
+
+/* reactive header: translucent + compress on scroll */
+document.getElementById('scroll').addEventListener('scroll',function(){
+  document.querySelector('.topbar').classList.toggle('scrolled', this.scrollTop>6);
+},{passive:true});
 
 /* init */
 buildAcc();
